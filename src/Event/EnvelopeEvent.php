@@ -8,7 +8,7 @@ use Bernard\Queue;
 /**
  * @package Bernard
  */
-class EnvelopeEvent extends \Symfony\Component\EventDispatcher\Event
+class EnvelopeEvent extends \Symfony\Contracts\EventDispatcher\Event
 {
     protected $envelope;
     protected $queue;
