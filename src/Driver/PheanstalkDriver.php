@@ -2,7 +2,7 @@
 
 namespace Bernard\Driver;
 
-use Pheanstalk\PheanstalkInterface;
+use Pheanstalk\Contract\PheanstalkInterface;
 
 /**
  * Implements a Driver for use with https://github.com/pda/pheanstalk
@@ -51,7 +51,8 @@ class PheanstalkDriver implements \Bernard\Driver
      */
     public function pushMessage($queueName, $message)
     {
-        $this->pheanstalk->putInTube($queueName, $message);
+        $this->pheanstalk->useTube($queueName);
+        $this->pheanstalk->put($message);
     }
 
     /**
@@ -59,7 +60,10 @@ class PheanstalkDriver implements \Bernard\Driver
      */
     public function popMessage($queueName, $duration = 5)
     {
-        if ($job = $this->pheanstalk->reserveFromTube($queueName, $duration)) {
+        $job = $this->pheanstalk->withWatchedTube($queueName, 
+                fn(Pheanstalk $ph) => $ph->reserveWithTimeout($duration)
+        );
+        if ($job) {
             return [$job->getData(), $job];
         }
 
