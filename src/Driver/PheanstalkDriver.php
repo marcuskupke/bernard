@@ -61,7 +61,7 @@ class PheanstalkDriver implements \Bernard\Driver
     public function popMessage($queueName, $duration = 5)
     {
         $job = $this->pheanstalk->withWatchedTube($queueName, 
-                fn(Pheanstalk $ph) => $ph->reserveWithTimeout($duration)
+                fn(PheanstalkInterface $ph) => $ph->reserveWithTimeout($duration)
         );
         if ($job) {
             return [$job->getData(), $job];
